@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.navigation.fragment.findNavController
+import kotlinx.android.synthetic.main.fragment_second.*
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -23,8 +23,22 @@ class SecondFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        textViewSelectedDate.text = arguments?.getString("date")
 
-        view.findViewById<Button>(R.id.button_second).setOnClickListener {
+        button_cancel.setOnClickListener {
+            // go back to first fragment without changing anything
+            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        }
+
+        button_delete.setOnClickListener {
+            // delete, then go back to the first fragment
+            //delete
+            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        }
+
+        button_save.setOnClickListener {
+            // save, then go back to the first fragment
+            //save
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
     }
