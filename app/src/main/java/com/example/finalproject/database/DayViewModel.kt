@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,7 +38,7 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
     }
 
     // should update the live data object and also add the record to the database
-    fun addDayRecord(wakeTime: String, bedTime: String, rating: Int, entries: String) {
+    fun addDayRecord(wakeTime: String, bedTime: String, rating: Double, entries: String) {
         val day = Day(selectedDate, rating, entries, wakeTime, bedTime)
         isUpdating.value = true
         viewModelScope.launch(Dispatchers.IO) {

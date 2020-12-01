@@ -11,7 +11,7 @@ data class Day(
     val date: String,
 
     @ColumnInfo(name = "rating")
-    val rating: Int = 0,
+    val rating: Double = 0.0,
 
     @ColumnInfo(name = "journal")
     val journal: String = "",

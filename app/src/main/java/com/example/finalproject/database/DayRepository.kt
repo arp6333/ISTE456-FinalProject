@@ -1,7 +1,5 @@
 package com.example.finalproject.database
 
-import androidx.lifecycle.MutableLiveData
-
 class DayRepository(private val dayDao: DayDatabaseDao) {
 
     suspend fun getDay(date: String): Day? {
