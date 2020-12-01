@@ -80,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewSelectedDate" />
 
     <EditText
-        android:id="@+id/editTextWakeUp4"
+        android:id="@+id/editTextInBed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -110,9 +110,9 @@
         android:text="In bed time:"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextWakeUp4"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextInBed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextWakeUp4" />
+        app:layout_constraintTop_toTopOf="@+id/editTextInBed" />
 
     <TextView
         android:id="@+id/textViewSelectedDate"
@@ -134,7 +134,7 @@
         android:layout_marginBottom="16dp"
         android:editable="true"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextWakeUp4"
+        app:layout_constraintBottom_toTopOf="@+id/editTextInBed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextWakeUp" />

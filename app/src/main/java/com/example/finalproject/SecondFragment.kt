@@ -5,10 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.finalproject.database.DayViewModel
-import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.fragment_second.*
 
 /**
@@ -16,25 +16,35 @@ import kotlinx.android.synthetic.main.fragment_second.*
  */
 class SecondFragment : Fragment() {
 
-    private lateinit var dayViewModel: DayViewModel // use this view model to populate
+    // Use this view model to populate
+    private lateinit var dayViewModel: DayViewModel
 
-    // perform non-graphical initializations here
+    // Perform non-graphical initializations here
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dayViewModel = ViewModelProvider(this).get(DayViewModel::class.java)
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
+            inflater: LayoutInflater,
+            container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-
         dayViewModel.dayRecord.observe(viewLifecycleOwner, {
-            dayEntries.text = it.journal
-            // TODO - Ellie - figure out how to set the rest of the fields
-            // 'it' could be null if there is no record
-            // 'it' is the Day object - it has the fields you need
-            // When the Day object is updated the UI will automatically update
+            if (it == null) {
+                dayEntries.text = "No entries for this day."
+            }
+            else {
+                dayEntries.text = it?.journal
+                editTextWakeUp.setText(it?.wakeTime)
+                editTextInBed.setText(it?.bedTime)
+                if (it?.rating > 5 || it?.rating < 0) {
+                    ratingBar.rating = 0.toFloat()
+                }
+                else {
+                    ratingBar.rating = it?.rating.toFloat()
+                }
+            }
         })
 
         // Inflate the layout for this fragment
@@ -43,16 +53,14 @@ class SecondFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        textViewSelectedDate.text = arguments?.getString("dayRecord")
 
         button_cancel.setOnClickListener {
-            // go back to first fragment without changing anything
+            // Go back to first fragment without changing anything
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
 
         button_delete.setOnClickListener {
-            // delete, then go back to the first fragment
-            //delete
+            // Delete, then go back to the first fragment
             if (dayViewModel.dayRecord.value == null) {
                 // no record saved yet
                 // TODO add toast message saying there is no record to delete yet
@@ -60,18 +68,21 @@ class SecondFragment : Fragment() {
             else {
                 // TODO figure out the right way to delete record
             }
+            Toast.makeText(activity, "Record Deleted.", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
 
         button_save.setOnClickListener {
-            // save, then go back to the first fragment
+            // Save, then go back to the first fragment
             if (dayViewModel.dayRecord.value == null) {
                 // new record
                 // TODO - finish statement: dayViewModel.addDayRecord()
+                Toast.makeText(activity, "Record Created.", Toast.LENGTH_SHORT).show()
             }
             else {
                 // updating record
                 // TODO - finish statement: dayViewModel.updateDayRecord()
+                Toast.makeText(activity, "Record Updated.", Toast.LENGTH_SHORT).show()
             }
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
