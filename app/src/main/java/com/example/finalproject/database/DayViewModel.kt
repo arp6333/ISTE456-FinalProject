@@ -2,41 +2,87 @@ package com.example.finalproject.database
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DayViewModel(application: Application): AndroidViewModel(application) {
 
+    // Holds the LiveData object
+
     private val repository: DayRepository
+    private var isUpdating: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    private var _dayRecord = MutableLiveData<Day>() // day.value is null if no record
+    val dayRecord : LiveData<Day>
+        get() = _dayRecord
+    var selectedDate: String = ""
+
 
     init {
         val dayDao = DayDatabase.getInstance(application).dayDatabaseDao()
         repository = DayRepository(dayDao)
     }
 
-    fun addDayRecord(day: Day) {
+    // Called when a new date is selected
+    fun updateSelectedDate(dateString: String) {
+        val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formattedDate = df.format(dateString)
+        selectedDate = formattedDate
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addDay(day)
+            _dayRecord.value = repository.getDay(formattedDate)
         }
     }
 
+    // should update the live data object and also add the record to the database
+    fun addDayRecord(wakeTime: String, bedTime: String, rating: Int, entries: String) {
+        val day = Day(selectedDate, rating, entries, wakeTime, bedTime)
+        isUpdating.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            if (repository.addDay(day)) {
+                // insert success
+                _dayRecord.value = day
+            }
+            else {
+                _dayRecord.value = null
+            }
+            isUpdating.setValue(false)
+        }
+    }
+
+    // should update the live data object and also update the record in the database
     fun updateDayRecord(day: Day) {
+        isUpdating.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateDay(day)
+            if (repository.updateDay(day)) {
+                // update success
+                _dayRecord.value = day
+            }
+            else {
+                _dayRecord.value = null
+            }
+            isUpdating.value = false
         }
     }
 
-    fun getDayRecord(date: String) {
+    //
+    fun deleteDayRecord(day: Day) {
+        isUpdating.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getDay(date)
+            if (repository.deleteDay(day)) {
+                _dayRecord.value = null
+            }
+            isUpdating.value = false
         }
     }
 
-    fun deleteDayRecord(date: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteDay(date)
-        }
+    fun getIsUpdating(): Boolean {
+        return isUpdating.value!!
     }
 
 }
+// setvalue for UI thread, postvalue for background thread

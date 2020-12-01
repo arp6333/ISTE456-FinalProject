@@ -125,7 +125,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/entries"
+        android:id="@+id/dayEntries"
         android:layout_width="361dp"
         android:layout_height="349dp"
         android:layout_marginStart="8dp"

@@ -15,6 +15,12 @@ data class Day(
 
     @ColumnInfo(name = "journal")
     val journal: String = "",
+
+    @ColumnInfo(name = "wake_time")
+    val wakeTime: String = "",
+
+    @ColumnInfo(name = "bed_time")
+    val bedTime: String = ""
 )
 
 class DateTypeConverter {
