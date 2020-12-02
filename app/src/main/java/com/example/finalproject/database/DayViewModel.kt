@@ -19,7 +19,7 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
     private var _dayRecord = MutableLiveData<Day>() // day.value is null if no record
     val dayRecord : LiveData<Day>
         get() = _dayRecord
-    var selectedDate: String = ""
+    private var selectedDate: String = ""
 
 
     init {
@@ -38,8 +38,8 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
     }
 
     // should update the live data object and also add the record to the database
-    fun addDayRecord(wakeTime: String, bedTime: String, rating: Double, entries: String) {
-        val day = Day(selectedDate, rating, entries, wakeTime, bedTime)
+    fun addDayRecord(wakeTime: String, bedTime: String, rating: Float, entries: String) {
+        val day = Day(selectedDate, rating.toDouble(), entries, wakeTime, bedTime)
         isUpdating.value = true
         viewModelScope.launch(Dispatchers.IO) {
             if (repository.addDay(day)) {
@@ -49,7 +49,7 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
             else {
                 _dayRecord.postValue(null)
             }
-            isUpdating.setValue(false)
+            isUpdating.postValue(false)
         }
     }
 

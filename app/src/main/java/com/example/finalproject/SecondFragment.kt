@@ -76,7 +76,10 @@ class SecondFragment : Fragment() {
             // Save, then go back to the first fragment
             if (dayViewModel.dayRecord.value == null) {
                 // new record
-                // TODO - finish statement: dayViewModel.addDayRecord()
+                dayViewModel.addDayRecord(editTextWakeUp.text.toString(),
+                                          editTextInBed.text.toString(),
+                                          ratingBar.rating,
+                                          dayEntries.text.toString())
                 Toast.makeText(activity, "Record Created.", Toast.LENGTH_SHORT).show()
             }
             else {
@@ -87,4 +90,5 @@ class SecondFragment : Fragment() {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
     }
+
 }
