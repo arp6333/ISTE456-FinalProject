@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.finalproject.database.DayViewModel
 import kotlinx.android.synthetic.main.fragment_first.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -34,7 +33,7 @@ class FirstFragment : Fragment() {
     ): View? {
 
         dayViewModel.dayRecord.observe(viewLifecycleOwner, {
-            dayEntries.text = it.journal
+            dayEntries.text = it?.journal
         })
 
         // Inflate the layout for this fragment
@@ -44,10 +43,9 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val c = Calendar.getInstance().time
-        calendarView.date = c.time // set the calendar to have today selected
-        // TODO check that calendarView.date.toString() is okay to be passed through the formatter
-        dayViewModel.updateSelectedDate(calendarView.date.toString()) // fetches record for the selected date
+        val today = Date()
+        calendarView.date = today.time // set the calendar to have today selected
+        dayViewModel.updateSelectedDate(today) // fetches record for the selected date
         initListeners()
     }
 
@@ -57,10 +55,8 @@ class FirstFragment : Fragment() {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
 
-        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            // month starts at 0 so we add 1 to it
-            val actualMonth = month + 1
-            dayViewModel.updateSelectedDate("$year-$actualMonth-$dayOfMonth")
+        calendarView.setOnDateChangeListener { _, _, _, _ ->
+            dayViewModel.updateSelectedDate(Date(calendarView.date))
         }
     }
 }

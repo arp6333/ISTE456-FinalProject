@@ -28,12 +28,12 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
     }
 
     // Called when a new date is selected
-    fun updateSelectedDate(dateString: String) {
+    fun updateSelectedDate(date: Date) {
         val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val formattedDate = df.format(dateString)
+        val formattedDate = df.format(date)
         selectedDate = formattedDate
         viewModelScope.launch(Dispatchers.IO) {
-            _dayRecord.value = repository.getDay(formattedDate)
+            _dayRecord.postValue(repository.getDay(formattedDate))
         }
     }
 
@@ -44,10 +44,10 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             if (repository.addDay(day)) {
                 // insert success
-                _dayRecord.value = day
+                _dayRecord.postValue(day)
             }
             else {
-                _dayRecord.value = null
+                _dayRecord.postValue(null)
             }
             isUpdating.setValue(false)
         }
@@ -59,12 +59,12 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             if (repository.updateDay(day)) {
                 // update success
-                _dayRecord.value = day
+                _dayRecord.postValue(day)
             }
             else {
-                _dayRecord.value = null
+                _dayRecord.postValue(null)
             }
-            isUpdating.value = false
+            isUpdating.postValue(false)
         }
     }
 
@@ -73,9 +73,9 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
         isUpdating.value = true
         viewModelScope.launch(Dispatchers.IO) {
             if (repository.deleteDay(day)) {
-                _dayRecord.value = null
+                _dayRecord.postValue(null)
             }
-            isUpdating.value = false
+            isUpdating.postValue(false)
         }
     }
 
