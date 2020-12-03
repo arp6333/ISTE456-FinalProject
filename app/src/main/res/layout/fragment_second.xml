@@ -124,7 +124,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <EditText
         android:id="@+id/dayEntries"
         android:layout_width="361dp"
         android:layout_height="349dp"
@@ -132,7 +132,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:editable="true"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/editTextInBed"
         app:layout_constraintEnd_toEndOf="parent"

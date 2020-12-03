@@ -45,7 +45,7 @@ class SecondFragment : Fragment() {
             Toast.makeText(activity, "Observing", Toast.LENGTH_SHORT).show()
             Log.d("UPDATED DATE OF RECORD", it.date)
             if (it == null) {
-                dayEntries.text = "No entries for this day."
+                dayEntries.setText("No entries for this day.")
             }
             else {
                 populateUIFromViewModel(it)
@@ -105,7 +105,7 @@ class SecondFragment : Fragment() {
     }
 
     private fun populateUIFromViewModel(day: Day?) {
-        dayEntries.text = day?.journal
+        dayEntries.setText(day?.journal)
         editTextWakeUp.setText(day?.wakeTime)
         editTextInBed.setText(day?.bedTime)
         if (day != null) {
