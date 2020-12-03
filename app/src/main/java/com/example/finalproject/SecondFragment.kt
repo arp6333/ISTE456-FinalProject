@@ -1,20 +1,21 @@
 package com.example.finalproject
 
+import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.finalproject.database.Day
 import com.example.finalproject.database.DayViewModel
 import kotlinx.android.synthetic.main.fragment_second.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -68,6 +69,25 @@ class SecondFragment : Fragment() {
                 Toast.makeText(activity, "Entry Updated", Toast.LENGTH_SHORT).show()
             }
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        }
+
+        initTimePicker(editTextWakeUp)
+        initTimePicker(editTextInBed)
+    }
+
+    private fun initTimePicker(textView: TextView) {
+
+        val cal = Calendar.getInstance()
+
+        val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+            cal.set(Calendar.HOUR_OF_DAY, hour)
+            cal.set(Calendar.MINUTE, minute)
+
+            textView.text = SimpleDateFormat("HH:mm").format(cal.time)
+        }
+
+        textView.setOnClickListener {
+            TimePickerDialog(activity, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false).show()
         }
     }
 

@@ -6,4 +6,9 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="add_entries">Add Entries</string>
+    <string name="entries_lbl">Entries:</string>
+    <string name="bed_lbl">In bed time:</string>
+    <string name="wake_lbl">Wake up time:</string>
+    <string name="rating_lbl">Overall Rating</string>
 </resources>
