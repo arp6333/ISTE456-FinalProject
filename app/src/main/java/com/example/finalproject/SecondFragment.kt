@@ -21,39 +21,22 @@ import kotlinx.android.synthetic.main.fragment_second.*
  */
 class SecondFragment : Fragment() {
 
-    // Use this view model to populate
-    //private lateinit var dayViewModel: DayViewModel
     private val dayViewModel: DayViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_second, container, false)
-//        val cl = view.findViewById<ConstraintLayout>(R.id.constraintLayout)
-//        val spinner = cl.findViewById<Spinner>(R.id.loadingSpinner)
 
-//        dayViewModel.isUpdating.observe(viewLifecycleOwner, {
-//            if (it) spinner.visibility = View.VISIBLE else spinner.visibility = View.INVISIBLE
-//        })
-
-        // This code only runs when the viewmodel dayRecord value is REPLACED
         dayViewModel.dayRecord.observe(viewLifecycleOwner, {
-            Toast.makeText(activity, "Observing", Toast.LENGTH_SHORT).show()
-            if (it == null) {
-                dayEntries.setText("No entries for this day.")
-            }
-            else {
-                populateUIFromViewModel(it)
-            }
+            if (it == null) dayEntries.setText("No entries for this day.") else updateUIFromViewModel(it)
         })
 
-        return view
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_second, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Toast.makeText(activity, "onViewCreated", Toast.LENGTH_SHORT).show()
         // Populate the UI with the selected record
-        populateUIFromViewModel(dayViewModel.dayRecord.value)
+        updateUIFromViewModel(dayViewModel.dayRecord.value)
 
         button_cancel.setOnClickListener {
             // Go back to first fragment without changing anything
@@ -64,34 +47,40 @@ class SecondFragment : Fragment() {
             // Delete, then go back to the first fragment
             if (dayViewModel.dayRecord.value == null) {
                 // no record saved yet
-                // TODO add toast message saying there is no record to delete yet
+                Toast.makeText(activity, "Entry has not been saved yet", Toast.LENGTH_SHORT).show()
             }
             else {
-                // TODO figure out the right way to delete record
+                dayViewModel.deleteDayRecord()
+                Toast.makeText(activity, "Record Deleted.", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
-            Toast.makeText(activity, "Record Deleted.", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
 
         button_save.setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-
             if (dayViewModel.dayRecord.value == null) {
                 // new record
-                dayViewModel.addDayRecord(editTextWakeUp.text.toString(),
-                                          editTextInBed.text.toString(),
-                                          ratingBar.rating,
-                                          dayEntries.text.toString())
+                saveEntries()
+                Toast.makeText(activity, "Entry Saved", Toast.LENGTH_SHORT).show()
             }
             else {
                 // updating record
-                // TODO - finish statement: dayViewModel.updateDayRecord()
-                //Toast.makeText(activity, "Entry Updated", Toast.LENGTH_SHORT).show()
+                saveEntries()
+                Toast.makeText(activity, "Entry Updated", Toast.LENGTH_SHORT).show()
             }
+            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
     }
 
-    private fun populateUIFromViewModel(day: Day?) {
+    // Calls the saveRecord method on the view model from the UI data
+    private fun saveEntries() {
+        dayViewModel.saveRecord(editTextWakeUp.text.toString(),
+            editTextInBed.text.toString(),
+            ratingBar.rating,
+            dayEntries.text.toString())
+    }
+
+    // Updates the UI components with the values from the model
+    private fun updateUIFromViewModel(day: Day?) {
         dayEntries.setText(day?.journal)
         editTextWakeUp.setText(day?.wakeTime)
         editTextInBed.setText(day?.bedTime)

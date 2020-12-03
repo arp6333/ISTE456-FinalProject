@@ -4,17 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Spinner
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.finalproject.database.DayViewModel
 import kotlinx.android.synthetic.main.fragment_first.*
+import java.text.DateFormat
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -33,7 +31,7 @@ class FirstFragment : Fragment() {
     ): View? {
 
         dayViewModel.dayRecord.observe(viewLifecycleOwner, {
-            dayEntries.text = it?.journal
+            dayEntries.text = it?.journal ?: "No entries for this day."
         })
 
         // Inflate the layout for this fragment
@@ -43,11 +41,21 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val instant = Date().toInstant().atZone(ZoneId.systemDefault())
-        val today = instant.toLocalDate()
-        calendarView.date = instant.toInstant().toEpochMilli() // set the calendar to have today selected
-        dayViewModel.updateSelectedDate(today.year, today.monthValue, today.dayOfMonth)
+        val dateString = dayViewModel.getSelectedDate()
+        if (dateString != "") {
+            initCalendar(LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE))
+        }
+        else {
+            initCalendar(LocalDate.now())
+        }
         initListeners()
+    }
+
+    private fun initCalendar(date: LocalDate) {
+        // set the calendar to have today selected
+        calendarView.date = date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        // update the view model with the selected date
+        dayViewModel.updateSelectedDate(date.year, date.monthValue, date.dayOfMonth)
     }
 
     private fun initListeners() {
