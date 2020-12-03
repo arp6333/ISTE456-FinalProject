@@ -8,6 +8,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.finalproject.database.DayViewModel
@@ -23,13 +24,7 @@ import java.util.*
 class FirstFragment : Fragment() {
 
     // Date format is yyyy-MM-dd
-    private lateinit var dayViewModel: DayViewModel // use this view model to populate
-
-    // perform non-graphical initializations here
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        dayViewModel = ViewModelProvider(this).get(DayViewModel::class.java)
-    }
+    private val dayViewModel: DayViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

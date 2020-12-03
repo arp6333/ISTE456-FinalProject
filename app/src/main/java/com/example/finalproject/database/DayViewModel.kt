@@ -40,7 +40,6 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
         val df = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())
         val formattedDate = date.format(df)
         selectedDate = formattedDate
-        Log.d("SELECTED DATE", selectedDate)
         viewModelScope.launch(Dispatchers.IO) {
             _dayRecord.postValue(repository.getDay(formattedDate))
         }
@@ -48,7 +47,6 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
 
     // should update the live data object and also add the record to the database
     fun addDayRecord(wakeTime: String, bedTime: String, rating: Float, entries: String) {
-        // TODO figure out why the selectedDate is null here, it should be set before this function call
         val day = Day(selectedDate, rating.toDouble(), entries, wakeTime, bedTime)
         _isUpdating.value = true
         viewModelScope.launch(Dispatchers.IO) {
@@ -90,4 +88,3 @@ class DayViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 }
-// setvalue for UI thread, postvalue for background thread

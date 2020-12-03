@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.finalproject.database.Day
@@ -21,14 +22,8 @@ import kotlinx.android.synthetic.main.fragment_second.*
 class SecondFragment : Fragment() {
 
     // Use this view model to populate
-    private lateinit var dayViewModel: DayViewModel
-
-
-    // Perform non-graphical initializations here
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        dayViewModel = ViewModelProvider(this).get(DayViewModel::class.java)
-    }
+    //private lateinit var dayViewModel: DayViewModel
+    private val dayViewModel: DayViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -43,7 +38,6 @@ class SecondFragment : Fragment() {
         // This code only runs when the viewmodel dayRecord value is REPLACED
         dayViewModel.dayRecord.observe(viewLifecycleOwner, {
             Toast.makeText(activity, "Observing", Toast.LENGTH_SHORT).show()
-            Log.d("UPDATED DATE OF RECORD", it.date)
             if (it == null) {
                 dayEntries.setText("No entries for this day.")
             }
@@ -88,13 +82,6 @@ class SecondFragment : Fragment() {
                                           editTextInBed.text.toString(),
                                           ratingBar.rating,
                                           dayEntries.text.toString())
-
-//                if (dayViewModel.dayRecord.value != null) {
-//                    Toast.makeText(activity, "Entry Saved", Toast.LENGTH_SHORT).show()
-//                }
-//                else {
-//                    Toast.makeText(activity, "Failed to Save", Toast.LENGTH_SHORT).show()
-//                }
             }
             else {
                 // updating record
