@@ -1,13 +1,17 @@
 package com.example.finalproject
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Spinner
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.finalproject.database.Day
 import com.example.finalproject.database.DayViewModel
 import kotlinx.android.synthetic.main.fragment_second.*
 
@@ -19,40 +23,43 @@ class SecondFragment : Fragment() {
     // Use this view model to populate
     private lateinit var dayViewModel: DayViewModel
 
+
     // Perform non-graphical initializations here
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dayViewModel = ViewModelProvider(this).get(DayViewModel::class.java)
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_second, container, false)
+//        val cl = view.findViewById<ConstraintLayout>(R.id.constraintLayout)
+//        val spinner = cl.findViewById<Spinner>(R.id.loadingSpinner)
+
+//        dayViewModel.isUpdating.observe(viewLifecycleOwner, {
+//            if (it) spinner.visibility = View.VISIBLE else spinner.visibility = View.INVISIBLE
+//        })
+
+        // This code only runs when the viewmodel dayRecord value is REPLACED
         dayViewModel.dayRecord.observe(viewLifecycleOwner, {
+            Toast.makeText(activity, "Observing", Toast.LENGTH_SHORT).show()
+            Log.d("UPDATED DATE OF RECORD", it.date)
             if (it == null) {
                 dayEntries.text = "No entries for this day."
             }
             else {
-                dayEntries.text = it?.journal
-                editTextWakeUp.setText(it?.wakeTime)
-                editTextInBed.setText(it?.bedTime)
-                if (it?.rating > 5 || it?.rating < 0) {
-                    ratingBar.rating = 0.toFloat()
-                }
-                else {
-                    ratingBar.rating = it?.rating.toFloat()
-                }
+                populateUIFromViewModel(it)
             }
         })
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second, container, false)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Toast.makeText(activity, "onViewCreated", Toast.LENGTH_SHORT).show()
+        // Populate the UI with the selected record
+        populateUIFromViewModel(dayViewModel.dayRecord.value)
 
         button_cancel.setOnClickListener {
             // Go back to first fragment without changing anything
@@ -73,22 +80,41 @@ class SecondFragment : Fragment() {
         }
 
         button_save.setOnClickListener {
-            // Save, then go back to the first fragment
+            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+
             if (dayViewModel.dayRecord.value == null) {
                 // new record
                 dayViewModel.addDayRecord(editTextWakeUp.text.toString(),
                                           editTextInBed.text.toString(),
                                           ratingBar.rating,
                                           dayEntries.text.toString())
-                Toast.makeText(activity, "Record Created.", Toast.LENGTH_SHORT).show()
+
+//                if (dayViewModel.dayRecord.value != null) {
+//                    Toast.makeText(activity, "Entry Saved", Toast.LENGTH_SHORT).show()
+//                }
+//                else {
+//                    Toast.makeText(activity, "Failed to Save", Toast.LENGTH_SHORT).show()
+//                }
             }
             else {
                 // updating record
                 // TODO - finish statement: dayViewModel.updateDayRecord()
-                Toast.makeText(activity, "Record Updated.", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(activity, "Entry Updated", Toast.LENGTH_SHORT).show()
             }
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
     }
 
+    private fun populateUIFromViewModel(day: Day?) {
+        dayEntries.text = day?.journal
+        editTextWakeUp.setText(day?.wakeTime)
+        editTextInBed.setText(day?.bedTime)
+        if (day != null) {
+            if (day.rating > 5 || day.rating < 0) {
+                ratingBar.rating = 0.toFloat()
+            }
+            else {
+                ratingBar.rating = day.rating.toFloat()
+            }
+        }
+    }
 }

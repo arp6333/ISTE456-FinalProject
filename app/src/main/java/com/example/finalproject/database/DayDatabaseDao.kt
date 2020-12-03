@@ -11,7 +11,7 @@ interface DayDatabaseDao {
 
     // Insert a new day record
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(day: Day): Long?
+    suspend fun insert(day: Day): Long
 
     // Delete an existing day record, will return an int
     @Delete

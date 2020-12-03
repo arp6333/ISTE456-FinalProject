@@ -7,7 +7,8 @@ class DayRepository(private val dayDao: DayDatabaseDao) {
     }
 
     suspend fun addDay(day: Day): Boolean {
-        return dayDao.insert(day) != null
+        val a = dayDao.insert(day)
+        return a != null
     }
 
     suspend fun updateDay(day: Day): Boolean {
